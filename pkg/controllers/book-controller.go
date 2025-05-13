@@ -26,7 +26,12 @@ func GetBookById(w http.ResponseWriter,r *http.Request){
 	if err != nil {
 		fmt.Println("error while parsing")
 	}
-	bookDetails,_ := models.GetBookById(Id)
+	bookDetails,db:= models.GetBookById(Id)
+	if db.RowsAffected == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("No book found with given id"))
+		return
+	}
 	res,_ := json.Marshal(bookDetails)
 	w.Header().Set("Content-Type","Application/json")
 	w.WriteHeader(http.StatusOK)
